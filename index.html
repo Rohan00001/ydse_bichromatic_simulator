@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>YDSE Bichromatic Interference Simulator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="header-text">
+                <h1>Young's Double Slit Experiment (YDSE)</h1>
+                <p>Bichromatic Interference & Dual-Frequency Superposition Simulator</p>
+            </div>
+            <div class="mode-selector" role="group" aria-label="Experiment Mode">
+                <button id="btnMode1" class="mode-btn active" data-mode="bichromatic">
+                    Case 1: Both Frequencies in Both Slits
+                </button>
+                <button id="btnMode2" class="mode-btn" data-mode="separate">
+                    Case 2: One Frequency per Slit (Incoherent)
+                </button>
+            </div>
+        </header>
+
+        <section class="metrics-bar">
+            <div class="metric-card">
+                <span class="metric-label">Fringe Width &beta;<sub>1</sub></span>
+                <span class="metric-value" id="valBeta1">1.30 mm</span>
+                <span class="metric-sub" id="subFreq1">461.2 THz</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-label">Fringe Width &beta;<sub>2</sub></span>
+                <span class="metric-value" id="valBeta2">1.00 mm</span>
+                <span class="metric-sub" id="subFreq2">599.6 THz</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-label">1st Coinciding Maxima</span>
+                <span class="metric-value" id="valCoincide">&pm; 6.50 mm</span>
+                <span class="metric-sub" id="subRatio">n<sub>1</sub>:n<sub>2</sub> = 5:6.5</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-label">Pattern State</span>
+                <span class="metric-value status-badge" id="valState">Stationary Fringes</span>
+                <span class="metric-sub" id="subFormula">I = I<sub>1</sub>(y) + I<sub>2</sub>(y)</span>
+            </div>
+        </section>
+
+        <main class="main-grid">
+            <section class="vis-panel">
+                <div class="canvas-card">
+                    <div class="card-header">
+                        <h2>Viewing Screen Fringe Pattern (y &isin; [-10 mm, +10 mm])</h2>
+                        <span class="touch-hint">Hover or touch &amp; drag to inspect</span>
+                    </div>
+                    <div class="canvas-wrapper fringe-wrapper">
+                        <canvas id="fringeCanvas"></canvas>
+                    </div>
+                </div>
+
+                <div class="canvas-card">
+                    <div class="card-header">
+                        <h2>Spatial Intensity Distribution I(y)</h2>
+                        <div class="legend">
+                            <span class="legend-item"><i class="dot" id="legDot1"></i> I<sub>1</sub>(y)</span>
+                            <span class="legend-item"><i class="dot" id="legDot2"></i> I<sub>2</sub>(y)</span>
+                            <span class="legend-item"><i class="dot dot-total"></i> I<sub>total</sub>(y)</span>
+                        </div>
+                    </div>
+                    <div class="canvas-wrapper plot-wrapper">
+                        <canvas id="plotCanvas"></canvas>
+                    </div>
+                </div>
+
+                <div class="inspector-bar" id="inspectorBar">
+                    <div class="insp-item">
+                        <span class="insp-label">Position (y):</span>
+                        <strong id="inspY">0.00 mm</strong>
+                    </div>
+                    <div class="insp-item">
+                        <span class="insp-label">Path Diff (&Delta;x):</span>
+                        <strong id="inspDx">0.00 &mu;m</strong>
+                    </div>
+                    <div class="insp-item">
+                        <span class="insp-label">I<sub>1</sub> / I<sub>2</sub>:</span>
+                        <strong id="inspI12">4.00 I<sub>0</sub> / 4.00 I<sub>0</sub></strong>
+                    </div>
+                    <div class="insp-item">
+                        <span class="insp-label">I<sub>total</sub>:</span>
+                        <strong id="inspItot">8.00 I<sub>0</sub></strong>
+                    </div>
+                </div>
+            </section>
+
+            <aside class="controls-panel">
+                <h2>Optical Parameters</h2>
+
+                <div class="control-group">
+                    <div class="control-header">
+                        <label for="sliderW1">Wavelength 1 (&lambda;<sub>1</sub>)</label>
+                        <span class="badge" id="badgeW1">650 nm</span>
+                    </div>
+                    <input type="range" id="sliderW1" min="400" max="700" step="5" value="650">
+                    <div class="range-labels">
+                        <span>400 nm (Violet)</span>
+                        <span>700 nm (Red)</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <div class="control-header">
+                        <label for="sliderW2">Wavelength 2 (&lambda;<sub>2</sub>)</label>
+                        <span class="badge" id="badgeW2">500 nm</span>
+                    </div>
+                    <input type="range" id="sliderW2" min="400" max="700" step="5" value="500">
+                    <div class="range-labels">
+                        <span>400 nm (Violet)</span>
+                        <span>700 nm (Red)</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <div class="control-header">
+                        <label for="sliderD">Slit Separation (d)</label>
+                        <span class="badge badge-neutral" id="badgeD">0.50 mm</span>
+                    </div>
+                    <input type="range" id="sliderD" min="0.20" max="2.00" step="0.05" value="0.50">
+                    <div class="range-labels">
+                        <span>0.20 mm</span>
+                        <span>2.00 mm</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <div class="control-header">
+                        <label for="sliderScreen">Screen Distance (D)</label>
+                        <span class="badge badge-neutral" id="badgeScreen">1.00 m</span>
+                    </div>
+                    <input type="range" id="sliderScreen" min="0.50" max="2.00" step="0.05" value="1.00">
+                    <div class="range-labels">
+                        <span>0.50 m</span>
+                        <span>2.00 m</span>
+                    </div>
+                </div>
+
+                <div class="presets-box">
+                    <span class="presets-title">Quick Wavelength Presets</span>
+                    <div class="preset-buttons">
+                        <button class="preset-btn" data-w1="650" data-w2="500">Red + Cyan (650/500)</button>
+                        <button class="preset-btn" data-w1="600" data-w2="450">Orange + Blue (600/450)</button>
+                        <button class="preset-btn" data-w1="640" data-w2="540">Red + Green (640/540)</button>
+                        <button class="preset-btn" data-w1="550" data-w2="550">Monochromatic (550/550)</button>
+                    </div>
+                </div>
+
+                <div class="theory-box" id="theoryBox">
+                    <h3>Physics Summary</h3>
+                    <p id="theoryText">
+                        Each frequency passes through both slits and interferes independently with itself. Cross-interference vanishes because &Delta;f &ne; 0. Central maxima always coincide at y = 0.
+                    </p>
+                </div>
+            </aside>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
